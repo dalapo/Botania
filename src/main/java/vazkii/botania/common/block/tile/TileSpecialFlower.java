@@ -74,6 +74,11 @@ public class TileSpecialFlower extends TileMod implements IWandBindable, ISubTil
 		}
 	}
 
+	public void onNeighbourBlockUpdate(BlockPos neighbourPos)
+	{
+		subTile.checkNewBlock(neighbourPos);
+	}
+	
 	@Override
 	public void update() {
 		if(subTile != null) {
