@@ -153,6 +153,16 @@ public class BlockModFlower extends BlockFlower implements ILexiconable, IGrowab
 	public void grow(@Nonnull World world, @Nonnull Random rand, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
 		placeDoubleFlower(world, pos, state.getValue(BotaniaStateProps.COLOR), 1 | 2);
 	}
+	
+	@Override
+	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos)
+	{
+		TileEntity flower = world.getTileEntity(pos);
+		if (flower instanceof TileSpecialFlower)
+		{
+			((TileSpecialFlower)flower).onNeighbourBlockUpdate(fromPos);
+		}
+	}
 
 	public static void placeDoubleFlower(World world, BlockPos pos, EnumDyeColor color, int flags) {
 		Block flower = color.getMetadata() >= 8 ? ModBlocks.doubleFlower2 : ModBlocks.doubleFlower1;
