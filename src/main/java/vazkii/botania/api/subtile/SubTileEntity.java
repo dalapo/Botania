@@ -154,6 +154,10 @@ public class SubTileEntity {
 	{
 		return false;
 	}
+	
+	public void checkNewBlock(BlockPos coords)
+	{
+	}
 
 	/**
 	 * Allows additional processing of sub tile drops
