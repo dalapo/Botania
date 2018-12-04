@@ -57,7 +57,25 @@ public class SubTilePureDaisy extends SubTileEntity {
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
-
+		for (int i=0; i<POSITIONS.length; i++)
+		{
+			if (ticksRemaining[i] > 0) ticksRemaining[i]--;
+			if (ticksRemaining[i] == 0)
+			{
+				BlockPos coords = supertile.getPos().add(POSITIONS[i]));
+				world.profiler.startSection("findRecipe");
+				RecipePureDaisy recipe = findRecipe(coords);
+				if (recipe != null && recipe.set(world, coords, this))
+				{
+					world.addBlockEvent(getPos(), supertile.getBlockType(), RECIPE_COMPLETE_EVENT, i);
+					if (ConfigHandler.blockBreakParticles)
+					{
+						supertile.getWorld().playEvent(2001, coords, Block.getStateId(recipe.getOutputState()));
+					}
+				}
+			}
+		}
+		/*
 		if(getWorld().isRemote) {
 			for (int i = 0; i < POSITIONS.length; i++) {
 				if ((activePositions >>> i & 1) > 0) {
@@ -99,6 +117,23 @@ public class SubTilePureDaisy extends SubTileEntity {
 		} else ticksRemaining[positionAt] = -1;
 
 		updateActivePositions();
+		*/
+	}
+	
+	public void checkNewBlock(BlockPos coords) // Called on adjacent block update
+	{
+		RecipePureDaisy recipe = findRecipe(coords);
+		if (recipe != null)
+		{
+			BlockPos delta = getPos().subtract(coords); // Might be coords.subtract(getPos())
+			for (int i=0; i<POSITIONS.length; i++)
+			{
+				if (POSITIONS[i].equals(delta))
+				{
+					ticksRemaining[i] = recipe.getTime();
+				}
+			}
+		}
 	}
 
 	private void updateActivePositions() {
